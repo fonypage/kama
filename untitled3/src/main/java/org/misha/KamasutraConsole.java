@@ -112,3 +112,127 @@ public final class KamasutraConsole {
         }
     }
 }
+import java.util.*;
+
+public class KamastraCipher {
+    public static void main(String[] args) {
+        String alphabet = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
+        System.out.println("Длина алфавита: " + alphabet.length());
+        
+        // Делим алфавит пополам
+        int half = alphabet.length() / 2;
+        char[] firstHalf = alphabet.substring(0, half).toCharArray();
+        char[] secondHalf = alphabet.substring(half).toCharArray();
+        
+        // Перемешиваем обе половины
+        shuffleArray(firstHalf);
+        shuffleArray(secondHalf);
+        
+        // Создаем словарь для шифрования
+        Map<Character, Character> encryptDict = new HashMap<>();
+        for (int i = 0; i < firstHalf.length; i++) {
+            encryptDict.put(firstHalf[i], secondHalf[i]);
+            encryptDict.put(secondHalf[i], firstHalf[i]);
+        }
+        
+        // Вывод ключей (таблицы соответствий)
+        System.out.println("=".repeat(60));
+        System.out.println("ШИФР КАМАСУТРА - ТАБЛИЦА СООТВЕТСТВИЙ:");
+        System.out.println("=".repeat(60));
+        System.out.println("Пары букв для замены:");
+        System.out.println("-".repeat(30));
+        
+        for (int i = 0; i < firstHalf.length; i++) {
+            System.out.println(firstHalf[i] + " ↔ " + secondHalf[i]);
+        }
+        
+        System.out.println("=".repeat(60));
+        System.out.println();
+        
+        // Компактный вид ключа
+        System.out.println("Компактный вид ключа:");
+        System.out.println("Первая половина:  " + arrayToString(firstHalf));
+        System.out.println("Вторая половина:  " + arrayToString(secondHalf));
+        System.out.println("=".repeat(60));
+        System.out.println();
+        
+        // Шифрование
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Введите текст для шифрования: ");
+        String text = scanner.nextLine();
+        StringBuilder encrypted = new StringBuilder();
+        
+        for (char c : text.toCharArray()) {
+            char lowerChar = Character.toLowerCase(c);
+            if (encryptDict.containsKey(lowerChar)) {
+                char replacement = encryptDict.get(lowerChar);
+                if (Character.isUpperCase(c)) {
+                    encrypted.append(Character.toUpperCase(replacement));
+                } else {
+                    encrypted.append(replacement);
+                }
+            } else {
+                encrypted.append(c);
+            }
+        }
+        
+        System.out.println("Зашифрованный текст: " + encrypted);
+        System.out.println();
+        
+        // Расшифровка (тот же процесс)
+        StringBuilder decrypted = new StringBuilder();
+        for (char c : encrypted.toString().toCharArray()) {
+            char lowerChar = Character.toLowerCase(c);
+            if (encryptDict.containsKey(lowerChar)) {
+                char replacement = encryptDict.get(lowerChar);
+                if (Character.isUpperCase(c)) {
+                    decrypted.append(Character.toUpperCase(replacement));
+                } else {
+                    decrypted.append(replacement);
+                }
+            } else {
+                decrypted.append(c);
+            }
+        }
+        
+        System.out.println("Расшифрованный текст: " + decrypted);
+        
+        // Дополнительная информация
+        System.out.println("\n" + "=".repeat(60));
+        System.out.println("ДОПОЛНИТЕЛЬНАЯ ИНФОРМАЦИЯ:");
+        System.out.println("=".repeat(60));
+        System.out.println("Полный словарь замен:");
+        
+        int count = 0;
+        for (Map.Entry<Character, Character> entry : encryptDict.entrySet()) {
+            if (count % 5 == 0) {
+                System.out.println();
+            }
+            System.out.print(entry.getKey() + "→" + entry.getValue() + "  ");
+            count++;
+        }
+        
+        System.out.println("\n" + "=".repeat(60));
+        scanner.close();
+    }
+    
+    // Метод для перемешивания массива
+    private static void shuffleArray(char[] array) {
+        Random random = new Random();
+for (int i = array.length - 1; i > 0; i--) {
+            int index = random.nextInt(i + 1);
+            char temp = array[index];
+            array[index] = array[i];
+            array[i] = temp;
+        }
+    }
+    
+    // Метод для преобразования массива в строку с пробелами
+    private static String arrayToString(char[] array) {
+        StringBuilder sb = new StringBuilder();
+        for (char c : array) {
+            sb.append(c).append(" ");
+        }
+        return sb.toString().trim();
+    }
+}
